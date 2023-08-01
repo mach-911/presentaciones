@@ -1,0 +1,727 @@
+<!DOCTYPE html><html lang="es-ES"><head><title>Autenticación en rails</title><meta property="og:title" content="Autenticación en rails"><meta name="author" content="Marco Contreras"><meta property="article:author" content="Marco Contreras"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0"><meta name="apple-mobile-web-app-capable" content="yes"><meta http-equiv="X-UA-Compatible" content="ie=edge"><meta property="og:type" content="website"><meta name="twitter:card" content="summary"><style>@media screen{body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{-webkit-tap-highlight-color:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;background-color:transparent;border:0;color:inherit;cursor:pointer;font-size:inherit;opacity:.8;outline:none;padding:0;transition:opacity .2s linear}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:disabled,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:disabled{cursor:not-allowed;opacity:.15!important}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover{opacity:1}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:active,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:active{opacity:.6}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button:hover:not(:disabled),body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button:hover:not(:disabled){transition:none}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-prev{background:transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJNNjggOTAgMjggNTBsNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button.bespoke-marp-presenter-info-page-next{background:transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI1IiBkPSJtMzIgOTAgNDAtNDAtNDAtNDAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen]{background:transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IGNsYXNzPSJhIiB4PSIxMCIgeT0iMjAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgcng9IjUuNjciLz48cGF0aCBjbGFzcz0iYSIgZD0iTTQwIDcwSDIwVjUwbTIwIDBMMjAgNzBtNDAtNDBoMjB2MjBtLTIwIDAgMjAtMjAiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button.exit[data-bespoke-marp-osc=fullscreen],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button.exit[data-bespoke-marp-osc=fullscreen]{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDpub25lO3N0cm9rZTojZmZmO3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2Utd2lkdGg6NXB4fTwvc3R5bGU+PC9kZWZzPjxyZWN0IGNsYXNzPSJhIiB4PSIxMCIgeT0iMjAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI2MCIgcng9IjUuNjciLz48cGF0aCBjbGFzcz0iYSIgZD0iTTIwIDUwaDIwdjIwbS0yMCAwIDIwLTIwbTQwIDBINjBWMzBtMjAgMEw2MCA1MCIvPjwvc3ZnPg==")}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter]{background:transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNODcuOCA0Ny41Qzg5IDUwIDg3LjcgNTIgODUgNTJIMzVhOC43IDguNyAwIDAgMS03LjItNC41bC0xNS42LTMxQzExIDE0IDEyLjIgMTIgMTUgMTJoNTBhOC44IDguOCAwIDAgMSA3LjIgNC41ek02MCA1MnYzNm0tMTAgMGgyME00NSA0MmgyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iNSIvPjwvc3ZnPg==") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-bigger{background:transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMTIgNTBoODBNNTIgOTBWMTAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjUiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button.bespoke-marp-presenter-note-smaller{background:transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cGF0aCBkPSJNMTIgNTBoODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjUiLz48L3N2Zz4=") no-repeat 50%;background-size:contain;overflow:hidden;text-indent:100%;white-space:nowrap}}.bespoke-marp-note,.bespoke-marp-osc,.bespoke-progress-parent{display:none;transition:none}@media screen{body,html{height:100%;margin:0}body{background:#000;overflow:hidden}svg.bespoke-marp-slide{content-visibility:hidden;opacity:0;pointer-events:none;z-index:-1}svg.bespoke-marp-slide.bespoke-marp-active{content-visibility:visible;opacity:1;pointer-events:auto;z-index:0}svg.bespoke-marp-slide.bespoke-marp-active.bespoke-marp-active-ready *{-webkit-animation-name:__bespoke_marp__!important;animation-name:__bespoke_marp__!important}@supports not (content-visibility:hidden){svg.bespoke-marp-slide[data-bespoke-marp-load=hideable]{display:none}svg.bespoke-marp-slide[data-bespoke-marp-load=hideable].bespoke-marp-active{display:block}}[data-bespoke-marp-fragment=inactive]{visibility:hidden}body[data-bespoke-view=""] .bespoke-marp-parent,body[data-bespoke-view=next] .bespoke-marp-parent{bottom:0;left:0;position:absolute;right:0;top:0}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc{background:rgba(0,0,0,.65);border-radius:7px;bottom:50px;color:#fff;contain:paint;display:block;font-family:Helvetica,Arial,sans-serif;font-size:16px;left:50%;line-height:0;opacity:1;padding:12px;position:absolute;touch-action:manipulation;transform:translateX(-50%);transition:opacity .2s linear;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;white-space:nowrap;will-change:transform;z-index:1}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>*,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>*{margin-left:6px}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>:first-child,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>:first-child{margin-left:0}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>span,body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>span{opacity:.8}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>span[data-bespoke-marp-osc=page],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>span[data-bespoke-marp-osc=page]{display:inline-block;min-width:140px;text-align:center}body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],body[data-bespoke-view=""] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=fullscreen],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=next],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=presenter],body[data-bespoke-view=next] .bespoke-marp-parent>.bespoke-marp-osc>button[data-bespoke-marp-osc=prev]{height:32px;line-height:32px;width:32px}body[data-bespoke-view=""] .bespoke-marp-parent.bespoke-marp-inactive,body[data-bespoke-view=next] .bespoke-marp-parent.bespoke-marp-inactive{cursor:none}body[data-bespoke-view=""] .bespoke-marp-parent.bespoke-marp-inactive>.bespoke-marp-osc,body[data-bespoke-view=next] .bespoke-marp-parent.bespoke-marp-inactive>.bespoke-marp-osc{opacity:0;pointer-events:none}body[data-bespoke-view=""] svg.bespoke-marp-slide,body[data-bespoke-view=next] svg.bespoke-marp-slide{height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent{background:#222;display:flex;height:5px;width:100%}body[data-bespoke-view=""] .bespoke-progress-parent+.bespoke-marp-parent{top:5px}body[data-bespoke-view=""] .bespoke-progress-parent .bespoke-progress-bar{background:#0288d1;flex:0 0 0;transition:flex-basis .2s cubic-bezier(0,1,1,1)}body[data-bespoke-view=next]{background:transparent}body[data-bespoke-view=presenter]{background:#161616}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container{display:grid;font-family:Helvetica,Arial,sans-serif;grid-template:"current dragbar next" minmax(140px,1fr) "current dragbar note" 2fr "info    dragbar note" 3em;grid-template-columns:minmax(3px,var(--bespoke-marp-presenter-split-ratio,66%)) 0 minmax(3px,1fr);height:100%;left:0;position:absolute;top:0;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-parent{grid-area:current;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-parent svg.bespoke-marp-slide{height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;top:20px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-parent svg.bespoke-marp-slide.bespoke-marp-active{filter:drop-shadow(0 3px 10px rgba(0,0,0,.5))}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container{background:#0288d1;cursor:col-resize;grid-area:dragbar;margin-left:-3px;opacity:0;position:relative;transition:opacity .4s linear .1s;width:6px;z-index:10}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container:hover{opacity:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-dragbar-container.active{opacity:1;transition-delay:0s}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container{background:#222;cursor:pointer;display:none;grid-area:next;overflow:hidden;position:relative}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-next-container iframe.bespoke-marp-presenter-next{background:transparent;border:0;display:block;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));height:calc(100% - 40px);left:20px;pointer-events:none;position:absolute;top:20px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container{background:#222;color:#eee;grid-area:note;position:relative;z-index:1}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper{bottom:0;display:block;left:0;position:absolute;right:0;top:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons{background:rgba(0,0,0,.65);border-radius:4px;bottom:0;display:flex;gap:4px;margin:12px;opacity:0;padding:6px;pointer-events:none;position:absolute;right:0;transition:opacity .2s linear}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-buttons:focus-within,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-presenter-note-wrapper:focus-within+.bespoke-marp-presenter-note-buttons,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container:hover .bespoke-marp-presenter-note-buttons{opacity:1;pointer-events:auto}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note{word-wrap:break-word;box-sizing:border-box;font-size:calc(1.1em*var(--bespoke-marp-note-font-scale, 1));height:calc(100% - 40px);margin:20px;overflow:auto;padding-right:3px;scrollbar-color:hsla(0,0%,93%,.5) transparent;scrollbar-width:thin;white-space:pre-wrap;width:calc(100% - 40px)}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar{width:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-track{background:transparent}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note::-webkit-scrollbar-thumb{background:hsla(0,0%,93%,.5);border-radius:6px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note:empty{pointer-events:none}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note.active{display:block}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:first-child{margin-top:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-note-container .bespoke-marp-note p:last-child{margin-bottom:0}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container{align-items:center;box-sizing:border-box;color:#eee;display:flex;flex-wrap:nowrap;grid-area:info;justify-content:center;overflow:hidden;padding:0 10px}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-time,body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer{box-sizing:border-box;display:block;padding:0 10px;white-space:nowrap;width:100%}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container button{height:1.5em;line-height:1.5em;width:1.5em}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page{order:2;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-page .bespoke-marp-presenter-info-page-text{display:inline-block;min-width:120px;text-align:center}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-time{color:#999;order:1;text-align:left}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer{color:#999;order:3;text-align:right}body[data-bespoke-view=presenter] .bespoke-marp-presenter-container .bespoke-marp-presenter-info-container .bespoke-marp-presenter-info-timer:hover{cursor:pointer}}@media print{.bespoke-marp-presenter-info-container,.bespoke-marp-presenter-next-container,.bespoke-marp-presenter-note-container{display:none}}</style><style>@charset "UTF-8";@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Rubik&display=swap');div#p>svg>foreignObject>section{width:1280px;height:720px;box-sizing:border-box;overflow:hidden;position:relative;scroll-snap-align:center center}div#p>svg>foreignObject>section:after{bottom:0;content:attr(data-marpit-pagination);padding:inherit;pointer-events:none;position:absolute;right:0}div#p>svg>foreignObject>section:not([data-marpit-pagination]):after{display:none}/* Normalization */div#p>svg>foreignObject>section h1{font-size:2em;margin:0.67em 0}div#p>svg>foreignObject>section video::-webkit-media-controls{will-change:transform}@page{size:1280px 720px;margin:0}@media print{body,html{background-color:#fff;margin:0;page-break-inside:avoid;break-inside:avoid-page}div#p>svg>foreignObject>section{page-break-before:always;break-before:page}div#p>svg>foreignObject>section,div#p>svg>foreignObject>section *{-webkit-print-color-adjust:exact!important;animation-delay:0s!important;animation-duration:0s!important;color-adjust:exact!important;transition:none!important}div#p>svg[data-marpit-svg]{display:block;height:100vh;width:100vw}}div#p>svg>foreignObject>section svg[data-marp-fitting=svg]{display:block;height:auto;width:100%}@supports (-ms-ime-align:auto){div#p>svg>foreignObject>section svg[data-marp-fitting=svg]{position:static}}div#p>svg>foreignObject>section svg[data-marp-fitting=svg].__reflow__{content:""}@supports (-ms-ime-align:auto){div#p>svg>foreignObject>section svg[data-marp-fitting=svg].__reflow__{position:relative}}div#p>svg>foreignObject>section [data-marp-fitting-svg-content]{display:table;white-space:nowrap;width:-webkit-max-content;width:-moz-max-content;width:max-content}div#p>svg>foreignObject>section [data-marp-fitting-svg-content-wrap]{white-space:pre}div#p>svg>foreignObject>section img[data-marp-twemoji]{background:transparent;height:1em;margin:0 .05em 0 .1em;vertical-align:-.1em;width:1em}
+/*!
+ * Marp mr.mercedes theme.
+ * @theme mr.mercedes
+ * @author Marco Contreras
+ *
+ * @auto-scaling true
+ * @size 4:3 960px 720px
+ * @size 16:9 1280px 720px
+ */div#p>svg>foreignObject>section:not(a){--mercedes-background:#1e2024;--mercedes-block-background:#242527;--mercedes-current-line:#ff62d430;--mercedes-foreground:#bccfe0;--mercedes-white:#e5e8f1;--mercedes-comment:#638570;--dracula-orange:#ffb86c;--mercedes-header:#e8e6b1;--dracula-purple:#bd93f9;--mercedes-cyan:#5ed7f2;--dracula-red:#ff5555;--dracula-yellow:#f1fa8c}div#p>svg>foreignObject>section .hljs{display:block;padding:0.5em;background:var(--mercedes-block-background);width:100%}
+
+/* Dracula Foreground */div#p>svg>foreignObject>section .hljs,div#p>svg>foreignObject>section .hljs-subst,div#p>svg>foreignObject>section .hljs-template-variable,div#p>svg>foreignObject>section .hljs-typing,div#p>svg>foreignObject>section .hljs-variable{color:var(--mercedes-foreground)}
+
+/* Dracula Comment */div#p>svg>foreignObject>section .hljs-comment,div#p>svg>foreignObject>section .hljs-deletion,div#p>svg>foreignObject>section .hljs-quote{color:var(--mercedes-comment)}
+
+/* Dracula Cyan */div#p>svg>foreignObject>section .hljs-built_in,div#p>svg>foreignObject>section .hljs-class,div#p>svg>foreignObject>section .hljs-link,div#p>svg>foreignObject>section .hljs-meta .hljs-doctag,div#p>svg>foreignObject>section .hljs-section,div#p>svg>foreignObject>section .hljs-selector-tag{color:var(--mercedes-cyan)}
+
+
+/* Dracula Green */div#p>svg>foreignObject>section .hljs-title{color:var(--dracula-green)}
+
+/* Dracula Orange */div#p>svg>foreignObject>section .hljs-params{color:var(--dracula-orange)}
+
+/* Dracula Pink */div#p>svg>foreignObject>section .hljs-keyword{color:var(--dracula-pink)}
+
+/* Dracula Purple */div#p>svg>foreignObject>section .hljs-literal,div#p>svg>foreignObject>section .hljs-number{color:var(--dracula-purple)}
+
+/* Dracula Red */div#p>svg>foreignObject>section .hljs-regexp{color:var(--dracula-red)}
+
+/* Dracula Yellow */div#p>svg>foreignObject>section .hljs-addition,div#p>svg>foreignObject>section .hljs-attr,div#p>svg>foreignObject>section .hljs-bullet,div#p>svg>foreignObject>section .hljs-name,div#p>svg>foreignObject>section .hljs-string,div#p>svg>foreignObject>section .hljs-symbol,div#p>svg>foreignObject>section .hljs-template-tag,div#p>svg>foreignObject>section .hljs-type{color:var(--dracula-yellow)}div#p>svg>foreignObject>section .hljs-doctag,div#p>svg>foreignObject>section .hljs-keyword,div#p>svg>foreignObject>section .hljs-literal,div#p>svg>foreignObject>section .hljs-name,div#p>svg>foreignObject>section .hljs-section,div#p>svg>foreignObject>section .hljs-selector-tag,div#p>svg>foreignObject>section .hljs-strong,div#p>svg>foreignObject>section .hljs-title,div#p>svg>foreignObject>section .hljs-type{font-weight:bold;color:var(--mercedes-cyan)}div#p>svg>foreignObject>section .hljs-emphasis,div#p>svg>foreignObject>section .hljs-params{font-style:italic}div#p>svg>foreignObject>section svg[data-marp-fitting=svg]{max-height:580px}div#p>svg>foreignObject>section h1,div#p>svg>foreignObject>section h2,div#p>svg>foreignObject>section h3,div#p>svg>foreignObject>section h4,div#p>svg>foreignObject>section h5,div#p>svg>foreignObject>section h6{margin:0.5em 0 0 0;color:var(--mercedes-header)}div#p>svg>foreignObject>section h1 strong,div#p>svg>foreignObject>section h2 strong,div#p>svg>foreignObject>section h3 strong,div#p>svg>foreignObject>section h4 strong,div#p>svg>foreignObject>section h5 strong,div#p>svg>foreignObject>section h6 strong{font-weight:inherit}div#p>svg>foreignObject>section h1{font-size:1.8em}div#p>svg>foreignObject>section h2{font-size:1.5em}div#p>svg>foreignObject>section h3{font-size:1.3em}div#p>svg>foreignObject>section h4{font-size:1.1em}div#p>svg>foreignObject>section h5{font-size:1em}div#p>svg>foreignObject>section h6{font-size:0.9em}div#p>svg>foreignObject>section blockquote,div#p>svg>foreignObject>section p{margin:1em 0 0 0}div#p>svg>foreignObject>section ol>li,div#p>svg>foreignObject>section ul>li{margin:0.3em 0 0 0;color:var(--dracula-cyan)}div#p>svg>foreignObject>section ol>li>p,div#p>svg>foreignObject>section ul>li>p{margin:0.6em 0 0 0}div#p>svg>foreignObject>section code{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:0.8em;letter-spacing:0;margin:-0.1em 0.15em;padding:0.1em 0.2em;vertical-align:baseline;color:var(--dracula-green);background:var(--mercedes-block-background);border-bottom:1px solid #9cc}div#p>svg>foreignObject>section pre{display:block;margin:10px 0 0 0;min-height:1em;overflow:visible}div#p>svg>foreignObject>section pre code{box-sizing:border-box;margin:0;min-width:100%;padding:0.5em;font-size:0.7em;font-family:'JetBrains Mono',monospace;color:var(--mercedes-white)}div#p>svg>foreignObject>section pre code svg[data-marp-fitting=svg]{max-height:calc(580px - 1em)}div#p>svg>foreignObject>section blockquote{border-left:4px solid #cae7ae;padding:0 1em;font-size:22px;font-style:italic}div#p>svg>foreignObject>section blockquote p{position:relative;color:rgb(180,224,200);font-size:22px}div#p>svg>foreignObject>section blockquote:after,div#p>svg>foreignObject>section blockquote:before{font-family:"Times New Roman",serif;position:absolute;color:var(--dracula-green)}div#p>svg>foreignObject>section blockquote:before{top:0;left:0}div#p>svg>foreignObject>section blockquote:after{right:0;bottom:0;transform:rotate(180deg)}div#p>svg>foreignObject>section blockquote>:first-child{margin-top:0}div#p>svg>foreignObject>section mark{background:transparent}div#p>svg>foreignObject>section table{border-spacing:0;border-collapse:collapse;margin:1em 0 0 0;width:100%}div#p>svg>foreignObject>section table td,div#p>svg>foreignObject>section table th{padding:0.2em 0.4em;border-width:1px;border-style:solid;border-color:#5ed7f2!important}div#p>svg>foreignObject>section td code{color:#ff9}div#p>svg>foreignObject>section td{color:#bccfe0}div#p>svg>foreignObject>section{font-size:35px;font-family:"Rubik",sans-serif;letter-spacing:1px;padding:70px;color:var(--mercedes-foreground);background-color:var(--mercedes-background)}div#p>svg>foreignObject>section{--marpit-root-font-size:35px}div#p>svg>foreignObject>section img{margin:10px 0}div#p>svg>foreignObject>section strong{color:var(--mercedes-cyan)}div#p>svg>foreignObject>section>:first-child,div#p>svg>foreignObject>section>header:first-child+*{margin-top:0}div#p>svg>foreignObject>section a,div#p>svg>foreignObject>section mark{color:var(--dracula-red)}div#p>svg>foreignObject>section code{color:var(--dracula-current-green)}div#p>svg>foreignObject>section h1 strong,div#p>svg>foreignObject>section h2 strong,div#p>svg>foreignObject>section h3 strong,div#p>svg>foreignObject>section h4 strong,div#p>svg>foreignObject>section h5 strong,div#p>svg>foreignObject>section h6 strong{color:var(--dracula-current-line)}div#p>svg>foreignObject>section p{margin:20px 0;font-size:xx-large;color:var(--mercedes-foreground)}div#p>svg>foreignObject>section pre>code{background:var(--dracula-current-line)}div#p>svg>foreignObject>section blockquote:after,div#p>svg>foreignObject>section blockquote:before,div#p>svg>foreignObject>section footer,div#p>svg>foreignObject>section header,div#p>svg>foreignObject>section section:after{color:transparent}div#p>svg>foreignObject>section table td,div#p>svg>foreignObject>section table th{border-color:transparent;font-size:35px}div#p>svg>foreignObject>section table thead th{background:transparent;color:rgb(113,182,255)}div#p>svg>foreignObject>section table tbody>tr:nth-child(2n) td,div#p>svg>foreignObject>section table tbody>tr:nth-child(2n) th{background:transparent}div#p>svg>foreignObject>section footer,div#p>svg>foreignObject>section header,div#p>svg>foreignObject>section:after{box-sizing:border-box;font-size:66%;height:70px;line-height:50px;overflow:hidden;padding:10px 25px;position:absolute;color:var(--dracula-comment)}div#p>svg>foreignObject>section:after{--marpit-root-font-size:66%}div#p>svg>foreignObject>section header{left:0;right:0;top:0}div#p>svg>foreignObject>section footer{left:0;right:0;bottom:0}div#p>svg>foreignObject>section:after{right:0;bottom:0;font-size:80%}div#p>svg>foreignObject>section:after{--marpit-root-font-size:80%}
+
+/* bash */div#p>svg>foreignObject>section code.language-bash{background:#000;width:1139px;white-space:pre-wrap;border:2px solid var(--mercedes-foreground);position:relative;padding-top:42px;padding-left:35px}div#p>svg>foreignObject>section code.language-bash:before{content:"$\A";user-select:none;position:absolute;color:#9a7;left:13px;padding-right:8px}div#p>svg>foreignObject>section code.language-bash:after{content:" Terminal";color:rgb(250,226,226);position:absolute;display:block;right:0;top:0;width:100%;height:34px;background-color:rgba(250,235,215,0.306)}div#p>svg>foreignObject>section code.language-js,div#p>svg>foreignObject>section code.language-ruby{background:#00000060;border:2px solid #ccc;position:relative;display:block;width:1139px}div#p>svg>foreignObject>section code.language-erb{background:#000;width:1139px;border:2px solid #ceda}
+
+/* sass css */div#p>svg>foreignObject>section code.language-scss{background-color:#00000060;border:2px solid #ece5e5;position:relative;display:block;width:1139px}div#p>svg>foreignObject>section code.language-txt{background-color:#000;color:#fff;width:100%;user-select:none;border:2px solid #ccc}
+/* BEFORE */div#p>svg>foreignObject>section code.language-js:before,div#p>svg>foreignObject>section code.language-ruby:before,div#p>svg>foreignObject>section code.language-scss:before{padding:5px;background:#000;position:absolute;border:1px solid #ccc;right:0;z-index:1}div#p>svg>foreignObject>section{width:1280px;height:720px}@keyframes marp-outgoing-transition-slide-up{0%{transform:translateY(0%)}to{transform:translateY(calc(var(--marp-transition-direction, 1) * -100%))}}@keyframes marp-incoming-transition-slide-up{0%{transform:translateY(calc(var(--marp-transition-direction, 1) * 100%))}to{transform:translateY(0%)}}div#p>svg>foreignObject>section[data-marpit-scope-FWDkm5tq]{text-align:center}div#p>svg>foreignObject>section[data-marpit-scope-FWDkm5tq] img{border-radius:20px;filter:drop-shadow(1px 3px 5px #ff0);margin-top:60px}div#p>svg>foreignObject>section[data-marpit-scope-VMugkcw8] .language-ruby:before{content:"📂 config\A└─ 📄database.yml";padding:10px;background:#000;border:1px solid #ccc;font-style: ;position:absolute;right:0;top:0}div#p>svg>foreignObject>section[data-marpit-scope-W0u77f1u]{padding:40px 70px}div#p>svg>foreignObject>section[data-marpit-scope-W0u77f1u] .language-ruby{position:relative}div#p>svg>foreignObject>section[data-marpit-scope-W0u77f1u] .language-ruby:before{content:"📄 Gemfile";padding:10px;background:#00000060;position:absolute;right:0;top:0}div#p>svg>foreignObject>section[data-marpit-scope-ETUd6oiN]{padding:30px 60px}div#p>svg>foreignObject>section[data-marpit-scope-ETUd6oiN] code.language-bash{width:1500px}div#p>svg>foreignObject>section[data-marpit-scope-ETUd6oiN] code.language-bash:before{content:"";position:absolute;top:0;padding-right:8px}div#p>svg>foreignObject>section[data-marpit-scope-7u3rLFZ8] .language-ruby{width:1170px}div#p>svg>foreignObject>section[data-marpit-scope-7u3rLFZ8] .language-ruby:before{content:"📂 config\A └─ 📂 environments\A    └─ 📄 development.rb";bottom:0}div#p>svg>foreignObject>section[data-marpit-scope-7u3rLFZ8] .language-ruby:after{content:"39\A 40\A 41\A 42\A 43\A 44";position:absolute;top:10px;background:#222;border:1px solid #ccc;left:0px}div#p>svg>foreignObject>section[data-marpit-scope-7u3rLFZ8] code.language-ruby span:nth-of-type(2):before{content:"";position:absolute;width:100%;height:33px;background:#ff62d430;right:0}div#p>svg>foreignObject>section[data-marpit-scope-NEZWao1i]{padding:20px 60px}div#p>svg>foreignObject>section[data-marpit-scope-NEZWao1i] .language-ruby{width:1200px;font-size:21px}div#p>svg>foreignObject>section[data-marpit-scope-NEZWao1i] div#p>svg>foreignObject>section section.language-ruby{--marpit-root-font-size:21px}div#p>svg>foreignObject>section[data-marpit-scope-NEZWao1i] .language-ruby:before{content:"📂 db\A └─ 📂 migrate\A    └─ 📄 ..9_devise_create_users.rb";top:0}div#p>svg>foreignObject>section[data-marpit-scope-ixHVQfgU] .language-ruby{position:relative}div#p>svg>foreignObject>section[data-marpit-scope-ixHVQfgU] .language-ruby:before{content:"📂 config\A └─ 📄 routes.rb";padding:10px;background:#000;border:1px solid #ccc;position:absolute;right:0;top:0}div#p>svg>foreignObject>section[data-marpit-scope-sI9Qfr0M] td:nth-child(2){font-size:30px}div#p>svg>foreignObject>section[data-marpit-scope-tlhW4R0c] .language-ruby{position:relative}div#p>svg>foreignObject>section[data-marpit-scope-tlhW4R0c] .language-ruby:before{content:"📂 config\A └─ 📄 routes.rb";top:0}div#p>svg>foreignObject>section[data-marpit-scope-tlhW4R0c] code.language-ruby span:nth-of-type(6):before{content:"";position:absolute;width:100%;height:33px;background:var(--mercedes-current-line);right:0}div#p>svg>foreignObject>section[data-marpit-scope-PU7cogRn]{padding:25px 70px}div#p>svg>foreignObject>section[data-marpit-scope-PU7cogRn] .language-ruby{padding-left:35px}div#p>svg>foreignObject>section[data-marpit-scope-PU7cogRn] .language-ruby:before{content:"📂 config\A └─ 📂 initializers\A    └─ 📄 devise.rb";top:0}div#p>svg>foreignObject>section[data-marpit-scope-PU7cogRn] .language-ruby:after{content:"262\A 263\A 264\A 265\A 266\A 267\A 268";position:absolute;top:10px;background:#222;border:1px solid #ccc;padding:0 5px;left:0px}div#p>svg>foreignObject>section[data-marpit-scope-PU7cogRn] .language-ruby span:nth-of-type(5):before{content:"";position:absolute;width:100%;height:33px;background:var(--mercedes-current-line);right:0}div#p>svg>foreignObject>section[data-marpit-scope-PU7cogRn] table{font-size:20px}div#p>svg>foreignObject>section[data-marpit-scope-jjSgCEx9] .language-ruby{width:1310px}div#p>svg>foreignObject>section[data-marpit-scope-jjSgCEx9] .language-ruby:before{content:"📂 config\A└─ importmaps.rb";top:0}div#p>svg>foreignObject>section[data-marpit-scope-jjSgCEx9] .language-js:before{content:"📂 app\A└─ 📂 javascript\A    └─ 📄 application.js";top:0}div#p>svg>foreignObject>section[data-marpit-scope-jjSgCEx9] code.language-ruby span:nth-of-type(6):before,div#p>svg>foreignObject>section[data-marpit-scope-jjSgCEx9] code.language-ruby span:nth-of-type(8):before{content:"";position:absolute;width:100%;height:33px;background:var(--mercedes-current-line);right:0}div#p>svg>foreignObject>section[data-marpit-scope-jjSgCEx9] code.language-js span:nth-of-type(5):before{content:"";position:absolute;width:100%;height:33px;background:var(--mercedes-current-line);right:0}div#p>svg>foreignObject>section[data-marpit-scope-BWstSAWr] .language-ruby:before{content:"📄 Gemfile"}div#p>svg>foreignObject>section[data-marpit-scope-BWstSAWr] .language-scss:before{content:"📂 app\A└─ 📂 assets\A    └─ 📂 stylesheets\A       └─ 📄 application.scss"}div#p>svg>foreignObject>section[data-marpit-scope-BWstSAWr] code.language-scss span:nth-of-type(2):before{content:"";position:absolute;width:100%;height:33px;background:var(--mercedes-current-line);right:0}div#p>svg>foreignObject>section[data-marpit-scope-qclak9zL] code.language-txt{width:700px;font-size:30px;margin:0 110px}div#p>svg>foreignObject>section[data-marpit-scope-pPTSstrB]{display:flex;justify-content:center;position:relative}div#p>svg>foreignObject>section[data-marpit-scope-pPTSstrB] .container{position:absolute;top:-55px;width:100%;line-height:0}div#p>svg>foreignObject>section[data-marpit-scope-pPTSstrB] code,div#p>svg>foreignObject>section[data-marpit-scope-pPTSstrB] pre{background:#222}div#p>svg>foreignObject>section[data-marpit-scope-pPTSstrB] .emgithub-file .code-area td.hljs-ln-line{margin:0;font-size:17px;line-height:17px}div#p>svg>foreignObject>section[data-marpit-scope-pPTSstrB] .copy-btn{display:block;width:101%;text-align:center}div#p>svg>foreignObject>section[data-marpit-scope-pPTSstrB] table td,div#p>svg>foreignObject>section[data-marpit-scope-pPTSstrB] table th{padding:0.2em 0.4em;border-width:0;border-color:#5ed7f2!important}div#p>svg>foreignObject>section[data-marpit-scope-mIC7CFpA]{padding:15px 70px}div#p>svg>foreignObject>section[data-marpit-scope-mIC7CFpA] .language-erb{font-size:19px}div#p>svg>foreignObject>section[data-marpit-scope-mIC7CFpA] div#p>svg>foreignObject>section section.language-erb{--marpit-root-font-size:19px}div#p>svg>foreignObject>section[data-marpit-scope-Uo8sz94h]{padding:25px 70px}div#p>svg>foreignObject>section[data-marpit-scope-Uo8sz94h] .language-erb{white-space:pre-wrap;font-size:19px}div#p>svg>foreignObject>section[data-marpit-scope-Uo8sz94h] div#p>svg>foreignObject>section section.language-erb{--marpit-root-font-size:19px}div#p>svg>foreignObject>section[data-marpit-scope-qwPSG8SS] .language-ruby:before{content:"📂 app\A└─ 📂 controllers\A    └─ 📄 posts_controller.rb";position:absolute;bottom:0;right:0;border:1px solid #ccc}div#p>svg>foreignObject>section[data-marpit-scope-M5s1kLwD] .language-ruby{width:1120px}div#p>svg>foreignObject>section[data-marpit-scope-M5s1kLwD] .language-bash{width:1200px}div#p>svg>foreignObject>section[data-marpit-scope-M5s1kLwD] .language-bash:before{content:"irb(main):001:0>"}div#p>svg>foreignObject>section[data-marpit-scope-M5s1kLwD] .language-ruby{width:1170px}div#p>svg>foreignObject>section[data-marpit-scope-M5s1kLwD] .language-ruby:before{content:"📂 app\A└─ 📂 controllers\A    └─ 📄 posts_controller.rb";position:absolute;bottom:0;right:0;border:1px solid #ccc}div#p>svg>foreignObject>section[data-marpit-advanced-background=background]{columns:initial!important;display:block!important;padding:0!important}div#p>svg>foreignObject>section[data-marpit-advanced-background=background]:after,div#p>svg>foreignObject>section[data-marpit-advanced-background=background]:before,div#p>svg>foreignObject>section[data-marpit-advanced-background=content]:after,div#p>svg>foreignObject>section[data-marpit-advanced-background=content]:before{display:none!important}div#p>svg>foreignObject>section[data-marpit-advanced-background=background]>div[data-marpit-advanced-background-container]{all:initial;display:flex;flex-direction:row;height:100%;overflow:hidden;width:100%}div#p>svg>foreignObject>section[data-marpit-advanced-background=background]>div[data-marpit-advanced-background-container][data-marpit-advanced-background-direction=vertical]{flex-direction:column}div#p>svg>foreignObject>section[data-marpit-advanced-background=background][data-marpit-advanced-background-split]>div[data-marpit-advanced-background-container]{width:var(--marpit-advanced-background-split,50%)}div#p>svg>foreignObject>section[data-marpit-advanced-background=background][data-marpit-advanced-background-split=right]>div[data-marpit-advanced-background-container]{margin-left:calc(100% - var(--marpit-advanced-background-split, 50%))}div#p>svg>foreignObject>section[data-marpit-advanced-background=background]>div[data-marpit-advanced-background-container]>figure{all:initial;background-position:center;background-repeat:no-repeat;background-size:cover;flex:auto;margin:0}div#p>svg>foreignObject>section[data-marpit-advanced-background=content],div#p>svg>foreignObject>section[data-marpit-advanced-background=pseudo]{background:transparent!important}div#p>svg>foreignObject>section[data-marpit-advanced-background=pseudo],div#p>svg[data-marpit-svg]>foreignObject[data-marpit-advanced-background=pseudo]{pointer-events:none!important}div#p>svg>foreignObject>section[data-marpit-advanced-background-split]{width:100%;height:100%}</style></head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id="p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-marpit-scope-FWDkm5tq="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<h1>Manejando usuarios con devise</h1>
+<p><img src="assets/banner.png" alt="" style="width:1140px;" /></p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p><a href="https://github.com/heartcombo/devise">Devise</a> es una gema que facilita la implementación para la autenticación en nuestras aplicaciones.</p>
+<p>Dentro de los módulos de Devise tenemos:</p>
+<ul>
+<li><a href="https://github.com/heartcombo/devise/blob/main/lib/devise/models/database_authenticatable.rb">Database Authenticable</a>: encripta los campos de contraseña en la base de datos y se autentica a un usuario por medio de una solicitud HTTP - POST</li>
+<li><a href="https://github.com/heartcombo/devise/blob/main/lib/devise/models/omniauthable.rb">Omniauthable</a>: permite registrar y acceder utilizando facebook, twitter y cualquier apps que permita la autenticación multi-proveedor</li>
+<li><a href="https://github.com/heartcombo/devise/blob/main/lib/devise/models/confirmable.rb">Confirmable</a>: envía mensajes por correo con instrucciones para confirmar y verificar a un usuario</li>
+</ul>
+<p>Entre otros, para adentrarnos en su uso vamos a desarrollar un Blog</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-marpit-scope-VMugkcw8="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Construir una nueva aplicación Blog</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails new Blog -d postgresql
+</span></span></foreignObject></svg></code></pre>
+
+<p>Agregar los datos de conexión</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-symbol">default:</span> &amp;default
+  <span class="hljs-symbol">adapter:</span> postgresql
+  <span class="hljs-symbol">encoding:</span> unicode 
+  <span class="hljs-symbol">username:</span> tu_username <span class="hljs-comment"># <img class="emoji" draggable="false" alt="👈" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f448.svg" data-marp-twemoji=""/> Ej: postgres</span>
+  <span class="hljs-symbol">password:</span> tu_password <span class="hljs-comment"># <img class="emoji" draggable="false" alt="👈" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f448.svg" data-marp-twemoji=""/> Ej: postgres</span>
+  <span class="hljs-symbol">host:</span> <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>
+  <span class="hljs-symbol">port:</span> <span class="hljs-number">5432</span>
+<span class="hljs-comment">## .....</span>
+</span></span></foreignObject></svg></code></pre>
+<blockquote>
+<p>Si tienes interés de cargar los datos usando credenciales ver <a href="https://gist.github.com/EniDev911/97d9b3726679f30440fd68c627f72dc5">aquí</a> <img class="emoji" draggable="false" alt="👈" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f448.svg" data-marp-twemoji=""/></p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-marpit-scope-W0u77f1u="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Crear la base de datos:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails db:create
+</span></span></foreignObject></svg></code></pre>
+<p>Agregar la gema <strong>devise</strong> a nuestro proyecto:</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>gem <span class="hljs-string">&#x27;devise&#x27;</span>
+</span></span></foreignObject></svg></code></pre>
+<p>Procedemos con la instalación:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>bundle install
+</span></span></foreignObject></svg></code></pre>
+<p>Es necesario correr el generador con el siguiente comando:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails g devise:install
+</span></span></foreignObject></svg></code></pre>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-marpit-scope-ETUd6oiN="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Devise nos mostrará las siguientes instrucciones en consola:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-comment"># Depending on your application&#x27;s configuration some manual setup may be required:</span>
+<span class="hljs-comment">#  1. Ensure you have defined default url options in your environments files. Here                                                    </span>
+<span class="hljs-comment">#     is an example of default_url_options appropriate for a development environment                                                  </span>
+<span class="hljs-comment">#     in config/environments/development.rb:</span>
+      config.action_mailer.default_url_options = { host: <span class="hljs-string">&#x27;localhost&#x27;</span>, port: 3000 }
+<span class="hljs-comment">#      In production, :host should be set to the actual host of your application.                                                </span>
+<span class="hljs-comment">#     * Required for all applications. *</span>
+<span class="hljs-comment">#  2. Ensure you have defined root_url to *something* in your config/routes.rb.                                                       </span>
+<span class="hljs-comment">#     For example:                                                       #      root to:</span>
+<span class="hljs-comment">#       &quot;home#index&quot;                                                  </span>
+<span class="hljs-comment">#    * Not required for API-only Applications* </span>
+<span class="hljs-comment">#  3. Ensure you have flash messages in app/views/layouts/application.html.erb</span>
+<span class="hljs-comment">#     Forexample:     </span>
+      &lt;p class=<span class="hljs-string">&quot;notice&quot;</span>&gt;&lt;%= notice %&gt;&lt;/p&gt;
+      &lt;p class=<span class="hljs-string">&quot;alert&quot;</span>&gt;&lt;%= alert %&gt;&lt;/p&gt;                             
+<span class="hljs-comment">#       * Not required for API-only Applications *</span>
+<span class="hljs-comment">#  4. You can copy Devise views (for customization) to your app by running:</span>
+      rails g devise:views
+<span class="hljs-comment">#     * Not required *      </span>
+</span></span></foreignObject></svg></code></pre>
+<blockquote>
+<p>Las líneas en texto blanco las debemos considerar</p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-marpit-scope-7u3rLFZ8="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Hagamos el primero paso, configurar la URL que es requerido para el programa de correo de Devise en el entorno de desarrollo:</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>  <span class="hljs-comment"># Don&#x27;t care if the mailer can&#x27;t send.</span>
+  config.action_mailer.default_url_options = { <span class="hljs-symbol">host:</span> <span class="hljs-string">&#x27;localhost&#x27;</span>, <span class="hljs-symbol">port:</span> <span class="hljs-number">3000</span> }
+  config.action_mailer.raise_delivery_errors = <span class="hljs-literal">false</span>
+
+  config.action_mailer.perform_caching = <span class="hljs-literal">false</span>
+}
+</span></span></foreignObject></svg></code></pre>
+<blockquote>
+<p>Copia la línea seleccionada y pegala en la línea señalada; número 40</p>
+</blockquote>
+<p>Generar el modelo de usuarios que trae devise:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails g devise User
+</span></span></foreignObject></svg></code></pre>
+<blockquote>
+<p>El comando anterior nos creará una migración que podemos revisar en breve</p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-marpit-scope-NEZWao1i="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9"><pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DeviseCreateUsers</span> &lt; ActiveRecord::Migration[7.0]</span>
+  <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">change</span></span>
+    create_table <span class="hljs-symbol">:users</span> <span class="hljs-keyword">do</span> <span class="hljs-params">|t|</span>
+      <span class="hljs-comment">## Database authenticatable</span>
+      t.string <span class="hljs-symbol">:email</span>,              <span class="hljs-symbol">null:</span> <span class="hljs-literal">false</span>, <span class="hljs-symbol">default:</span> <span class="hljs-string">&quot;&quot;</span>
+      t.string <span class="hljs-symbol">:encrypted_password</span>, <span class="hljs-symbol">null:</span> <span class="hljs-literal">false</span>, <span class="hljs-symbol">default:</span> <span class="hljs-string">&quot;&quot;</span>
+
+      <span class="hljs-comment">## Recoverabwle</span>
+      t.string   <span class="hljs-symbol">:reset_password_token</span>
+      t.datetime <span class="hljs-symbol">:reset_password_sent_at</span>
+
+      <span class="hljs-comment">## Rememberable</span>
+      t.datetime <span class="hljs-symbol">:remember_created_at</span>
+
+      <span class="hljs-comment">## Trackable ...</span>
+      t.timestamps <span class="hljs-symbol">null:</span> <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">end</span>
+
+    add_index <span class="hljs-symbol">:users</span>, <span class="hljs-symbol">:email</span>,                <span class="hljs-symbol">unique:</span> <span class="hljs-literal">true</span>
+    add_index <span class="hljs-symbol">:users</span>, <span class="hljs-symbol">:reset_password_token</span>, <span class="hljs-symbol">unique:</span> <span class="hljs-literal">true</span>
+    <span class="hljs-comment"># add_index :users, :confirmation_token,   unique: true</span>
+    <span class="hljs-comment"># add_index :users, :unlock_token,         unique: true</span>
+  <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</span></span></foreignObject></svg></code></pre>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-marpit-scope-ixHVQfgU="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>El siguiente paso, es revisar las rutas que nos a creado devise:</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>Rails.application.routes.draw <span class="hljs-keyword">do</span>
+  devise_for <span class="hljs-symbol">:users</span>
+  <span class="hljs-comment"># Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html</span>
+
+  <span class="hljs-comment"># Defines the root path route (&quot;/&quot;)</span>
+  <span class="hljs-comment"># root &quot;articles#index&quot;</span>
+<span class="hljs-keyword">end</span>
+</span></span></foreignObject></svg></code></pre>
+<p>Podemos ver las rutas disponibles con el siguiente comando:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails routes users --expanded
+</span></span></foreignObject></svg></code></pre>
+<blockquote>
+<p>El comando anterior, nos mostrará por consola usando un formato de salida expandido (agradable a la vista). <a href="assets/rails_routes_expanded.png">Ver ejemplo</a></p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-marpit-scope-sI9Qfr0M="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Dentro de las rutas que crea devise, se encuentran:</p>
+<table>
+<thead>
+<tr>
+<th>Ruta</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /users/sign_up</code></td>
+<td>Formulario de registro</td>
+</tr>
+<tr>
+<td><code>POST /users</code></td>
+<td>Registrarse</td>
+</tr>
+<tr>
+<td><code>GET /users/sign_in</code></td>
+<td>Formulario de login</td>
+</tr>
+<tr>
+<td><code>POST /users/sign_in</code></td>
+<td>Login</td>
+</tr>
+<tr>
+<td><code>DELETE /users/sign_out</code></td>
+<td>Salir</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Las demás rutas son, en su mayoría, para el manejo de contraseñas (recuperar, cambiar, etc).</p>
+</blockquote>
+<p>Lo siguiente es ejecutar la migración y correr el servidor para probar algunas de las rutas.</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Corremos la migración en la base de datos:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails db:migrate
+</span></span></foreignObject></svg></code></pre>
+<p>Corremos el servidor:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails s
+</span></span></foreignObject></svg></code></pre>
+<p>Visitamos las siguientes urls:</p>
+<ul>
+<li><code>http://localhost:3000/users/sign_in</code></li>
+<li><code>http://localhost:3000/users/sign_up</code></li>
+</ul>
+<blockquote>
+<p>En este punto ya podemos crear usuarios, aunque podríamos dejarlo para más adelante mientras seguimos modificando aspectos necesarios</p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-marpit-scope-tlhW4R0c="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Usando el generador creamos un nuevo controlador para la ruta root:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails g controller home index
+</span></span></foreignObject></svg></code></pre>
+<p>Ahora configuramos la ruta root:</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>Rails.application.routes.draw <span class="hljs-keyword">do</span>
+  devise_for <span class="hljs-symbol">:users</span>
+  <span class="hljs-comment"># Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html</span>
+
+  <span class="hljs-comment"># Defines the root path route (&quot;/&quot;)</span>
+  root <span class="hljs-string">&quot;home#index&quot;</span> <span class="hljs-comment"># <img class="emoji" draggable="false" alt="👈" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f448.svg" data-marp-twemoji=""/> </span>
+<span class="hljs-keyword">end</span>
+</span></span></foreignObject></svg></code></pre>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-marpit-scope-PU7cogRn="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Debemos modificar los formatos para la correcta navegación de devise:</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>  <span class="hljs-comment"># If you have any extra navigational formats, like :iphone or :mobile, you</span>
+  <span class="hljs-comment"># should add them to the navigational formats lists.</span>
+  <span class="hljs-comment"># </span>
+  <span class="hljs-comment"># The &quot;*/*&quot; below is required to match Internet Explorer requests.</span>
+  config.navigational_formats = [<span class="hljs-string">&#x27;*/*&#x27;</span>, <span class="hljs-symbol">:html</span>, <span class="hljs-symbol">:turbo_stream</span>] <span class="hljs-comment"># <img class="emoji" draggable="false" alt="👈" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f448.svg" data-marp-twemoji=""/></span>
+   
+  <span class="hljs-comment"># The default HTTP method used to sign out a resource. Default is :delete.</span>
+</span></span></foreignObject></svg></code></pre>
+<p>Devise ofrece métodos que tienen acceso a controladores y vistas:</p>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_signed_in?</code></td>
+<td>Retorna <code>true</code> si el usuario está autenticado, <code>false</code> de lo contrario</td>
+</tr>
+<tr>
+<td><code>current_user</code></td>
+<td>Retorna el usuario que está autenticado o <code>nil</code></td>
+</tr>
+<tr>
+<td><code>user_session</code></td>
+<td>Retorna la sesión del usuario</td>
+</tr>
+</tbody>
+</table>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-marpit-scope-jjSgCEx9="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<h4>Añadir bootstrap (JS)</h4>
+<p>Gracias a <a href="https://github.com/rails/importmap-rails">importmaps</a> en Rails 7, el proceso se vuelve muy sencillo, por la parte de JavaScript no hay necesidad de instalar node, npm, etc.<br />
+Agregamos las siguientes líneas (sólo las que se señalan en la selección), para cargar el JS necesario (bootstrap y popperjs):</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-comment"># ...</span>
+pin_all_from <span class="hljs-string">&quot;app/javascript/controllers&quot;</span>, <span class="hljs-symbol">under:</span> <span class="hljs-string">&quot;controllers&quot;</span>
+pin <span class="hljs-string">&quot;bootstrap&quot;</span>, <span class="hljs-symbol">to:</span> <span class="hljs-string">&quot;https://ga.jspm.io/npm:bootstrap@5.2.3/dist/js/bootstrap.esm.js&quot;</span>
+pin <span class="hljs-string">&quot;@popperjs/core&quot;</span>, <span class="hljs-symbol">to:</span> <span class="hljs-string">&quot;https://unpkg.com/@popperjs/core@2.11.8/dist/esm/index.js&quot;</span>
+</span></span></foreignObject></svg></code></pre>
+<p>Ahora solo añadimos la siguiente línea en el archivo indicado:</p>
+<pre><code class="language-js"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;@hotwired/turbo-rails&quot;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;controllers&quot;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;bootstrap&#x27;</span>
+</span></span></foreignObject></svg></code></pre>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-marpit-scope-BWstSAWr="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<h4>Añadir bootstrap (CSS)</h4>
+<p>Para instalar la gema oficial de Bootstrap 5 Ruby:</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-comment"># ...</span>
+gem <span class="hljs-string">&#x27;bootstrap&#x27;</span>, <span class="hljs-string">&#x27;~&gt; 5.2.3&#x27;</span>
+</span></span></foreignObject></svg></code></pre>
+<p>Editamos el siguiente archivo y cambiamos su extensión:</p>
+<pre><code class="language-scss"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-comment">/* ...
+ *= require_tree .
+ *= require_self
+ */</span>
+<span class="hljs-keyword">@import</span> <span class="hljs-string">&quot;bootstrap&quot;</span>;
+</span></span></foreignObject></svg></code></pre>
+<blockquote>
+<strong>nota:</strong> asegúrese de reemplazar su <span style="color: #f8a;">application.css</span> por <span style="color: #f8a;">application.scss</span> <br />¡ Eso significa que app/assets/stylesheets/application.css no debería existir !
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-marpit-scope-qclak9zL="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Crear una vista parcial, podemos usar un navbar de bootstrap y almacenarlos donde se indica a continuación y luego renderizarlo en el layout principal:</p>
+<div>
+<pre><code class="language-txt"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><img class="emoji" draggable="false" alt="📂" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f4c2.svg" data-marp-twemoji=""/> Blog
+└─ <img class="emoji" draggable="false" alt="📂" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f4c2.svg" data-marp-twemoji=""/> app
+   └─ <img class="emoji" draggable="false" alt="📂" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f4c2.svg" data-marp-twemoji=""/> views
+      ├─ <img class="emoji" draggable="false" alt="📁" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f4c1.svg" data-marp-twemoji=""/> layouts
+      |  └── application.html.erb  <img class="emoji" draggable="false" alt="👈" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f448.svg" data-marp-twemoji=""/> (render)
+      └─ <img class="emoji" draggable="false" alt="📂" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f4c2.svg" data-marp-twemoji=""/> shared 
+         └── _navbar.html.erb  <img class="emoji" draggable="false" alt="👈" src="https://twemoji.maxcdn.com/v/14.0.2/svg/1f448.svg" data-marp-twemoji=""/> (partial)
+</span></span></foreignObject></svg></code></pre>
+</div>
+<blockquote>
+<p>para renderizar debemos usar el siguiente helper <code>&lt;%= render 'shared/navbar.html.erb' %&gt;</code> en el application.html.erb</p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-marpit-scope-pPTSstrB="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9"><div class="container">
+<script src="https://emgithub.com/embed-v2.js?target=https%3A%2F%2Fgithub.com%2Fmach-911%2FBlog%2Fblob%2Fparciales%2Fapp%2Fviews%2Fshared%2F_nav.html.erb&style=gml&type=code&showLineNumbers=on&showCopy=on"></script>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-marpit-scope-mIC7CFpA="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<h3>¿Cómo saber si el usuario ha iniciado sesión</h3>
+<p>Como vimos anteriormente, la API de Devise nos ofrece algunos helpers como <code>user_signed_in?</code> que nos verificará si el usuario ha iniciado sesión retornando <code>true</code> o <code>false</code> en caso contrario y en función de ello podemos modificar la navegación para mostrar un mensaje personalizado en razón si el usuario está conectado o no así como las opciones de inicio de sesión. La API también proporciona el helper <code>current_user</code> que nos retornará una referencia a la instancia del objeto que ha iniciado sesión actualmente de nuestro modelo <code>User</code>. Ejemplo:</p>
+<pre><code class="language-erb"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+  &lt;%</span><span class="ruby"> <span class="hljs-keyword">if</span> user_signed_in? </span><span class="xml">%&gt;
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>&lt;%=</span><span class="ruby"> <span class="hljs-string">&quot;Hola, <span class="hljs-subst">#{current_user.email}</span>&quot;</span> </span><span class="xml">%&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>Cerrar sesión<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+  &lt;%</span><span class="ruby"> <span class="hljs-keyword">else</span> </span><span class="xml">%&gt;
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>Iniciar sesión<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>Registrarse<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+  &lt;%</span><span class="ruby"> <span class="hljs-keyword">end</span> </span><span class="xml">%&gt;
+<span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+</span></span></span></foreignObject></svg></code></pre>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-marpit-scope-Uo8sz94h="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9"><pre><code class="language-erb"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;navbar-nav ms-auto mb-2 mb-lg-0&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;nav-item dropdown&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;nav-link dropdown-toggle&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;#&quot;</span> <span class="hljs-attr">role</span>=<span class="hljs-string">&quot;button&quot;</span> <span class="hljs-attr">data-bs-toggle</span>=<span class="hljs-string">&quot;dropdown&quot;</span> <span class="hljs-attr">aria-expanded</span>=<span class="hljs-string">&quot;false&quot;</span>&gt;</span>
+    &lt;%</span><span class="ruby"> <span class="hljs-keyword">if</span> user_signed_in? </span><span class="xml">%&gt;
+      Hola &lt;%=</span><span class="ruby"> current_user.email </span><span class="xml">%&gt;
+    &lt;%</span><span class="ruby"> <span class="hljs-keyword">else</span> </span><span class="xml">%&gt;
+      Debes registrate o conectate
+    &lt;%</span><span class="ruby"> <span class="hljs-keyword">end</span> </span><span class="xml">%&gt;
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;dropdown-menu&quot;</span>&gt;</span>
+    &lt;%</span><span class="ruby"> <span class="hljs-keyword">if</span> user_signed_in? </span><span class="xml">%&gt;
+      <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>&lt;%=</span><span class="ruby"> button_to <span class="hljs-string">&#x27;Cerrar sesión&#x27;</span>, destroy_user_session_path, <span class="hljs-class"><span class="hljs-keyword">class</span>: &#x27;<span class="hljs-title">dropdown</span>-<span class="hljs-title">item</span>&#x27;, <span class="hljs-title">method</span>: :<span class="hljs-title">delete</span> </span></span><span class="xml">%&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+    &lt;%</span><span class="ruby"> <span class="hljs-keyword">else</span> </span><span class="xml">%&gt;
+      <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>
+        &lt;%=</span><span class="ruby"> link_to <span class="hljs-string">&#x27;Iniciar sesión&#x27;</span>, new_user_session_path, <span class="hljs-class"><span class="hljs-keyword">class</span>: &#x27;<span class="hljs-title">dropdown</span>-<span class="hljs-title">item</span>&#x27;</span></span><span class="xml">%&gt;
+      <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">hr</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;dropdown-divider&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>
+        &lt;%=</span><span class="ruby"> link_to <span class="hljs-string">&#x27;Registro&#x27;</span>, new_user_registration_path, <span class="hljs-class"><span class="hljs-keyword">class</span>: &#x27;<span class="hljs-title">dropdown</span>-<span class="hljs-title">item</span>&#x27;</span></span><span class="xml">%&gt;
+      <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+    &lt;%</span><span class="ruby"> <span class="hljs-keyword">end</span> </span><span class="xml">%&gt;
+    <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>  
+</span></span></span></foreignObject></svg></code></pre>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-marpit-scope-qwPSG8SS="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<h3>Limitar recursos</h3>
+<p>Creamos un modelo Post usando <em>scaffold</em>:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>rails g scaffold Post image title description:text user:references
+</span></span></foreignObject></svg></code></pre>
+<p>Para evitar mostrar los <strong>posts</strong> a usuarios no conectados, podemos limitar el recurso desde el controlador de los posts de la siguiente manera:</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>before_action <span class="hljs-symbol">:authenticate_user!</span>
+<span class="hljs-comment"># ...</span>
+<span class="hljs-comment"># ...</span>
+</span></span></foreignObject></svg></code></pre>
+<blockquote>
+<p><code>authenticate_user!</code> es un helper que nos proporciona Devise para configurar la autenticación de usuario para usar dentro de los controladores y vistas.</p>
+</blockquote>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-marpit-scope-M5s1kLwD="" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9">
+<p>Entramos a la consola de Rails con <code>rails c</code> y creamos un posts:</p>
+<pre><code class="language-bash"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>Post.create!(image:<span class="hljs-string">&quot;https://robohash.org/1&quot;</span>, title: <span class="hljs-string">&quot;Robohash&quot;</span>, description: <span class="hljs-string">&quot;Robohash una plataforma para generar imagenes.&quot;</span>, user_id: User.last.id)
+</span></span></foreignObject></svg></code></pre>
+<p>En un blog real, los usuarios que lo visitan pueden ver los posts, pero un usuario no puede crear, editar o eliminar un post en el blog sin estar registrado, podemos solo limitar esas acciones:</p>
+<pre><code class="language-ruby"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap>before_action <span class="hljs-symbol">:authenticate_user!</span>, <span class="hljs-symbol">only:</span> %i[ new edit create update destroy ]
+<span class="hljs-comment">#...</span>
+<span class="hljs-comment">#...</span>
+<span class="hljs-comment">#...</span>
+<span class="hljs-comment">#...</span>
+</span></span></foreignObject></svg></code></pre>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-class="invert" data-theme="mr.mercedes" data-style="@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+" class="invert" style="--class:invert;--theme:mr.mercedes;--style:@keyframes marp-outgoing-transition-slide-up {
+from { transform: translateY(0%); }
+to { transform: translateY(calc(var(--marp-transition-direction, 1) * -100%)); }
+}
+@keyframes marp-incoming-transition-slide-up {
+  from { transform: translateY(calc(var(--marp-transition-direction, 1) * 100%)); }
+  to { transform: translateY(0%); }
+}
+;" data-size="16:9"></section>
+<script>!function(){"use strict";const t="marpitSVGPolyfill:setZoomFactor,",e=Symbol();let r,o;function n(n){const i="object"==typeof n&&n.target||document,a="object"==typeof n?n.zoom:n;window[e]||(Object.defineProperty(window,e,{configurable:!0,value:!0}),window.addEventListener("message",(({data:e,origin:r})=>{if(r===window.origin)try{if(e&&"string"==typeof e&&e.startsWith(t)){const[,t]=e.split(","),r=Number.parseFloat(t);Number.isNaN(r)||(o=r)}}catch(t){console.error(t)}})));let l=!1;Array.from(i.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,n,i,s;t.style.transform||(t.style.transform="translateZ(0)");const c=a||o||t.currentScale||1;r!==c&&(r=c,l=c);const d=t.getBoundingClientRect(),{length:f}=t.children;for(let r=0;r<f;r+=1){const o=t.children[r];if(o.getScreenCTM){const t=o.getScreenCTM();if(t){const r=null!==(n=null===(e=o.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==n?n:0,a=null!==(s=null===(i=o.y)||void 0===i?void 0:i.baseVal.value)&&void 0!==s?s:0,l=o.children.length;for(let e=0;e<l;e+=1){const n=o.children[e];if("SECTION"===n.tagName){const{style:e}=n;e.transformOrigin||(e.transformOrigin=`${-r}px ${-a}px`),e.transform=`scale(${c}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-d.left}, ${t.f-d.top}) translateZ(0.0001px)`;break}}}}}})),!1!==l&&Array.from(i.querySelectorAll("iframe"),(({contentWindow:e})=>{null==e||e.postMessage(`${t}${l}`,"null"===window.origin?"*":window.origin)}))}r=1,o=void 0;const i=(t,e,r)=>{if(t.getAttribute(e)!==r)return t.setAttribute(e,r),!0};function a({once:t=!1,target:e=document}={}){const r="Apple Computer, Inc."===navigator.vendor?[n]:[];let o=!t;const a=()=>{for(const t of r)t({target:e});!function(t=document){Array.from(t.querySelectorAll('svg[data-marp-fitting="svg"]'),(t=>{var e;const r=t.firstChild,o=r.firstChild,{scrollWidth:n,scrollHeight:a}=o;let l,s=1;if(t.hasAttribute("data-marp-fitting-code")&&(l=null===(e=t.parentElement)||void 0===e?void 0:e.parentElement),t.hasAttribute("data-marp-fitting-math")&&(l=t.parentElement),l){const t=getComputedStyle(l),e=Math.ceil(l.clientWidth-parseFloat(t.paddingLeft||"0")-parseFloat(t.paddingRight||"0"));e&&(s=e)}const c=Math.max(n,s),d=Math.max(a,1),f=`0 0 ${c} ${d}`;i(r,"width",`${c}`),i(r,"height",`${d}`),i(t,"preserveAspectRatio",getComputedStyle(t).getPropertyValue("--preserve-aspect-ratio")||"xMinYMin meet"),i(t,"viewBox",f)&&t.classList.toggle("__reflow__")}))}(e),o&&window.requestAnimationFrame(a)};return a(),()=>{o=!1}}const l=Symbol(),s=document.currentScript;((t=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(t[l])return t[l];const e=a({target:t}),r=()=>{e(),delete t[l]};Object.defineProperty(t,l,{configurable:!0,value:r})})(s?s.getRootNode():document)}();
+</script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@1.7.1/lib/bespoke.js.LICENSE.txt */
+!function(){"use strict";const e=document.body,t=(...e)=>history.replaceState(...e),n="presenter",r="next",o=["",n,r],a="data-bespoke-marp-",i=(e,{protocol:t,host:n,pathname:r,hash:o}=location)=>{const a=e.toString();return`${t}//${n}${r}${a?"?":""}${a}${o}`},s=()=>e.dataset.bespokeView,l=e=>new URLSearchParams(location.search).get(e),d=(e,n={})=>{var r;const o={location,setter:t,...n},a=new URLSearchParams(o.location.search);for(const t of Object.keys(e)){const n=e[t];"string"==typeof n?a.set(t,n):a.delete(t)}try{o.setter({...null!==(r=window.history.state)&&void 0!==r?r:{}},"",i(a,o.location))}catch(e){console.error(e)}},c=(()=>{const e="bespoke-marp";try{return localStorage.setItem(e,e),localStorage.removeItem(e),!0}catch(e){return!1}})(),u=e=>{try{return localStorage.getItem(e)}catch(e){return null}},f=(e,t)=>{try{return localStorage.setItem(e,t),!0}catch(e){return!1}},m=e=>{try{return localStorage.removeItem(e),!0}catch(e){return!1}},g=(e,t)=>{const n="aria-hidden";t?e.setAttribute(n,"true"):e.removeAttribute(n)},p=e=>{e.parent.classList.add("bespoke-marp-parent"),e.slides.forEach((e=>e.classList.add("bespoke-marp-slide"))),e.on("activate",(t=>{const n="bespoke-marp-active",r=t.slide,o=r.classList,a=!o.contains(n);if(e.slides.forEach((e=>{e.classList.remove(n),g(e,!0)})),o.add(n),g(r,!1),a){const e=`${n}-ready`;o.add(e),document.body.clientHeight,o.remove(e)}}))},v=e=>{let t=0,n=0;Object.defineProperty(e,"fragments",{enumerable:!0,value:e.slides.map((e=>[null,...e.querySelectorAll("[data-marpit-fragment]")]))});const r=r=>void 0!==e.fragments[t][n+r],o=(r,o)=>{t=r,n=o,e.fragments.forEach(((e,t)=>{e.forEach(((e,n)=>{if(null==e)return;const i=t<r||t===r&&n<=o;e.setAttribute(`${a}fragment`,(i?"":"in")+"active");const s=`${a}current-fragment`;t===r&&n===o?e.setAttribute(s,"current"):e.removeAttribute(s)}))})),e.fragmentIndex=o;const i={slide:e.slides[r],index:r,fragments:e.fragments[r],fragmentIndex:o};e.fire("fragment",i)};e.on("next",(({fragment:a=!0})=>{if(a){if(r(1))return o(t,n+1),!1;const a=t+1;e.fragments[a]&&o(a,0)}else{const r=e.fragments[t].length;if(n+1<r)return o(t,r-1),!1;const a=e.fragments[t+1];a&&o(t+1,a.length-1)}})),e.on("prev",(({fragment:a=!0})=>{if(r(-1)&&a)return o(t,n-1),!1;const i=t-1;e.fragments[i]&&o(i,e.fragments[i].length-1)})),e.on("slide",(({index:t,fragment:n})=>{let r=0;if(void 0!==n){const o=e.fragments[t];if(o){const{length:e}=o;r=-1===n?e-1:Math.min(Math.max(n,0),e-1)}}o(t,r)})),o(0,0)},h=document,y=()=>!(!h.fullscreenEnabled&&!h.webkitFullscreenEnabled),b=()=>!(!h.fullscreenElement&&!h.webkitFullscreenElement),x=e=>{e.fullscreen=()=>{y()&&(async()=>{return b()?null===(e=h.exitFullscreen||h.webkitExitFullscreen)||void 0===e?void 0:e.call(h):((e=h.body)=>{var t;return null===(t=e.requestFullscreen||e.webkitRequestFullscreen)||void 0===t?void 0:t.call(e)})();var e})()},document.addEventListener("keydown",(t=>{"f"!==t.key&&"F11"!==t.key||t.altKey||t.ctrlKey||t.metaKey||!y()||(e.fullscreen(),t.preventDefault())}))},w="bespoke-marp-inactive",k=(e=2e3)=>({parent:t,fire:n})=>{const r=t.classList,o=e=>n(`marp-${e?"":"in"}active`);let a;const i=()=>{a&&clearTimeout(a),a=setTimeout((()=>{r.add(w),o()}),e),r.contains(w)&&(r.remove(w),o(!0))};for(const e of["mousedown","mousemove","touchend"])document.addEventListener(e,i);setTimeout(i,0)},E=["AUDIO","BUTTON","INPUT","SELECT","TEXTAREA","VIDEO"],L=e=>{e.parent.addEventListener("keydown",(e=>{if(!e.target)return;const t=e.target;(E.includes(t.nodeName)||"true"===t.contentEditable)&&e.stopPropagation()}))},$=e=>{window.addEventListener("load",(()=>{for(const t of e.slides){const e=t.querySelector("[data-marp-fitting]")?"":"hideable";t.setAttribute(`${a}load`,e)}}))},S=({interval:e=250}={})=>t=>{document.addEventListener("keydown",(e=>{if(" "===e.key&&e.shiftKey)t.prev();else if("ArrowLeft"===e.key||"ArrowUp"===e.key||"PageUp"===e.key)t.prev({fragment:!e.shiftKey});else if(" "!==e.key||e.shiftKey)if("ArrowRight"===e.key||"ArrowDown"===e.key||"PageDown"===e.key)t.next({fragment:!e.shiftKey});else if("End"===e.key)t.slide(t.slides.length-1,{fragment:-1});else{if("Home"!==e.key)return;t.slide(0)}else t.next();e.preventDefault()}));let n,r,o=0;t.parent.addEventListener("wheel",(a=>{let i=!1;const s=(e,t)=>{e&&(i=i||((e,t)=>((e,t)=>{const n="X"===t?"Width":"Height";return e[`client${n}`]<e[`scroll${n}`]})(e,t)&&((e,t)=>{const{overflow:n}=e,r=e[`overflow${t}`];return"auto"===n||"scroll"===n||"auto"===r||"scroll"===r})(getComputedStyle(e),t))(e,t)),(null==e?void 0:e.parentElement)&&s(e.parentElement,t)};if(0!==a.deltaX&&s(a.target,"X"),0!==a.deltaY&&s(a.target,"Y"),i)return;a.preventDefault();const l=Math.sqrt(a.deltaX**2+a.deltaY**2);if(void 0!==a.wheelDelta){if(void 0===a.webkitForce&&Math.abs(a.wheelDelta)<40)return;if(a.deltaMode===a.DOM_DELTA_PIXEL&&l<4)return}else if(a.deltaMode===a.DOM_DELTA_PIXEL&&l<12)return;r&&clearTimeout(r),r=setTimeout((()=>{n=0}),e);const d=Date.now()-o<e,c=l<=n;if(n=l,d||c)return;let u;(a.deltaX>0||a.deltaY>0)&&(u="next"),(a.deltaX<0||a.deltaY<0)&&(u="prev"),u&&(t[u](),o=Date.now())}))},P=(e=".bespoke-marp-osc")=>{const t=document.querySelector(e);if(!t)return()=>{};const n=(e,n)=>{t.querySelectorAll(`[${a}osc=${JSON.stringify(e)}]`).forEach(n)};return y()||n("fullscreen",(e=>e.style.display="none")),c||n("presenter",(e=>{e.disabled=!0,e.title="Presenter view is disabled due to restricted localStorage."})),e=>{t.addEventListener("click",(t=>{if(t.target instanceof HTMLElement){const{bespokeMarpOsc:n}=t.target.dataset;n&&t.target.blur();const r={fragment:!t.shiftKey};"next"===n?e.next(r):"prev"===n?e.prev(r):"fullscreen"===n?null==e||e.fullscreen():"presenter"===n&&e.openPresenterView()}})),e.parent.appendChild(t),e.on("activate",(({index:t})=>{n("page",(n=>n.textContent=`Page ${t+1} of ${e.slides.length}`))})),e.on("fragment",(({index:t,fragments:r,fragmentIndex:o})=>{n("prev",(e=>e.disabled=0===t&&0===o)),n("next",(n=>n.disabled=t===e.slides.length-1&&o===r.length-1))})),e.on("marp-active",(()=>g(t,!1))),e.on("marp-inactive",(()=>g(t,!0))),y()&&(e=>{for(const t of["","webkit"])h.addEventListener(t+"fullscreenchange",e)})((()=>n("fullscreen",(e=>e.classList.toggle("exit",y()&&b())))))}},T=e=>{window.addEventListener("message",(t=>{if(t.origin!==window.origin)return;const[n,r]=t.data.split(":");if("navigate"===n){const[t,n]=r.split(",");let o=Number.parseInt(t,10),a=Number.parseInt(n,10)+1;a>=e.fragments[o].length&&(o+=1,a=0),e.slide(o,{fragment:a})}}))};var I=["area","base","br","col","command","embed","hr","img","input","keygen","link","meta","param","source","track","wbr"];let N=e=>String(e).replace(/[&<>"']/g,(e=>`&${C[e]};`)),C={"&":"amp","<":"lt",">":"gt",'"':"quot","'":"apos"},A="dangerouslySetInnerHTML",D={className:"class",htmlFor:"for"},M={};function B(e,t){let n=[],r="";t=t||{};for(let e=arguments.length;e-- >2;)n.push(arguments[e]);if("function"==typeof e)return t.children=n.reverse(),e(t);if(e){if(r+="<"+e,t)for(let e in t)!1!==t[e]&&null!=t[e]&&e!==A&&(r+=` ${D[e]?D[e]:N(e)}="${N(t[e])}"`);r+=">"}if(-1===I.indexOf(e)){if(t[A])r+=t[A].__html;else for(;n.length;){let e=n.pop();if(e)if(e.pop)for(let t=e.length;t--;)n.push(e[t]);else r+=!0===M[e]?e:N(e)}r+=e?`</${e}>`:""}return M[r]=!0,r}const K=({children:e})=>B(null,null,...e),O="bespoke-marp-presenter-",q={container:`${O}container`,dragbar:`${O}dragbar-container`,next:`${O}next`,nextContainer:`${O}next-container`,noteContainer:`${O}note-container`,noteWrapper:`${O}note-wrapper`,noteButtons:`${O}note-buttons`,infoContainer:`${O}info-container`,infoPage:`${O}info-page`,infoPageText:`${O}info-page-text`,infoPagePrev:`${O}info-page-prev`,infoPageNext:`${O}info-page-next`,noteButtonsBigger:`${O}note-bigger`,noteButtonsSmaller:`${O}note-smaller`,infoTime:`${O}info-time`,infoTimer:`${O}info-timer`},_=e=>{const{title:t}=document;document.title="[Presenter view]"+(t?` - ${t}`:"");const n={},r=e=>(n[e]=n[e]||document.querySelector(`.${e}`),n[e]);document.body.appendChild((e=>{const t=document.createElement("div");return t.className=q.container,t.appendChild(e),t.insertAdjacentHTML("beforeend",B(K,null,B("div",{class:q.nextContainer},B("iframe",{class:q.next,src:"?view=next"})),B("div",{class:q.dragbar}),B("div",{class:q.noteContainer},B("div",{class:q.noteWrapper}),B("div",{class:q.noteButtons},B("button",{class:q.noteButtonsSmaller,tabindex:"-1",title:"Smaller notes font size"},"Smaller notes font size"),B("button",{class:q.noteButtonsBigger,tabindex:"-1",title:"Bigger notes font size"},"Bigger notes font size"))),B("div",{class:q.infoContainer},B("div",{class:q.infoPage},B("button",{class:q.infoPagePrev,tabindex:"-1",title:"Previous"},"Previous"),B("span",{class:q.infoPageText}),B("button",{class:q.infoPageNext,tabindex:"-1",title:"Next"},"Next")),B("time",{class:q.infoTime,title:"Current time"}),B("time",{class:q.infoTimer,title:"Timer"})))),t})(e.parent)),(e=>{let t=!1;r(q.dragbar).addEventListener("mousedown",(()=>{t=!0,r(q.dragbar).classList.add("active")})),window.addEventListener("mouseup",(()=>{t=!1,r(q.dragbar).classList.remove("active")})),window.addEventListener("mousemove",(e=>{if(!t)return;const n=e.clientX/document.documentElement.clientWidth*100;r(q.container).style.setProperty("--bespoke-marp-presenter-split-ratio",`${Math.max(0,Math.min(100,n))}%`)})),r(q.nextContainer).addEventListener("click",(()=>e.next()));const n=r(q.next),o=(a=n,(e,t)=>{var n;return null===(n=a.contentWindow)||void 0===n?void 0:n.postMessage(`navigate:${e},${t}`,"null"===window.origin?"*":window.origin)});var a;n.addEventListener("load",(()=>{r(q.nextContainer).classList.add("active"),o(e.slide(),e.fragmentIndex),e.on("fragment",(({index:e,fragmentIndex:t})=>o(e,t)))}));const i=document.querySelectorAll(".bespoke-marp-note");i.forEach((e=>{e.addEventListener("keydown",(e=>e.stopPropagation())),r(q.noteWrapper).appendChild(e)})),e.on("activate",(()=>i.forEach((t=>t.classList.toggle("active",t.dataset.index==e.slide())))));let s=0;const l=e=>{s=Math.max(-5,s+e),r(q.noteContainer).style.setProperty("--bespoke-marp-note-font-scale",(1.2**s).toFixed(4))},d=()=>l(1),c=()=>l(-1),u=r(q.noteButtonsBigger),f=r(q.noteButtonsSmaller);u.addEventListener("click",(()=>{u.blur(),d()})),f.addEventListener("click",(()=>{f.blur(),c()})),document.addEventListener("keydown",(e=>{"+"===e.key&&d(),"-"===e.key&&c()}),!0),e.on("activate",(({index:t})=>{r(q.infoPageText).textContent=`${t+1} / ${e.slides.length}`}));const m=r(q.infoPagePrev),g=r(q.infoPageNext);m.addEventListener("click",(t=>{m.blur(),e.prev({fragment:!t.shiftKey})})),g.addEventListener("click",(t=>{g.blur(),e.next({fragment:!t.shiftKey})})),e.on("fragment",(({index:t,fragments:n,fragmentIndex:r})=>{m.disabled=0===t&&0===r,g.disabled=t===e.slides.length-1&&r===n.length-1}));let p=new Date;const v=()=>{const e=new Date,t=e=>`${Math.floor(e)}`.padStart(2,"0"),n=e.getTime()-p.getTime(),o=t(n/1e3%60),a=t(n/1e3/60%60),i=t(n/36e5%24);r(q.infoTime).textContent=e.toLocaleTimeString(),r(q.infoTimer).textContent=`${i}:${a}:${o}`};v(),setInterval(v,250),r(q.infoTimer).addEventListener("click",(()=>{p=new Date}))})(e)},X=e=>{if(!(e=>e.syncKey&&"string"==typeof e.syncKey)(e))throw new Error("The current instance of Bespoke.js is invalid for Marp bespoke presenter plugin.");Object.defineProperties(e,{openPresenterView:{enumerable:!0,value:F},presenterUrl:{enumerable:!0,get:U}}),c&&document.addEventListener("keydown",(t=>{"p"!==t.key||t.altKey||t.ctrlKey||t.metaKey||(t.preventDefault(),e.openPresenterView())}))};function F(){const{max:e,floor:t}=Math,n=e(t(.85*window.innerWidth),640),r=e(t(.85*window.innerHeight),360);return window.open(this.presenterUrl,O+this.syncKey,`width=${n},height=${r},menubar=no,toolbar=no`)}function U(){const e=new URLSearchParams(location.search);return e.set("view","presenter"),e.set("sync",this.syncKey),i(e)}const V=e=>{const t=s();return t===r&&e.appendChild(document.createElement("span")),{"":X,[n]:_,[r]:T}[t]},R=e=>{e.on("activate",(t=>{document.querySelectorAll(".bespoke-progress-parent > .bespoke-progress-bar").forEach((n=>{n.style.flexBasis=100*t.index/(e.slides.length-1)+"%"}))}))},j=e=>{const t=Number.parseInt(e,10);return Number.isNaN(t)?null:t},H=(e={})=>{const t={history:!0,...e};return e=>{let n=!0;const r=e=>{const t=n;try{return n=!0,e()}finally{n=t}},o=(t={fragment:!0})=>{((t,n)=>{const{min:r,max:o}=Math,{fragments:a,slides:i}=e,s=o(0,r(t,i.length-1)),l=o(0,r(n||0,a[s].length-1));s===e.slide()&&l===e.fragmentIndex||e.slide(s,{fragment:l})})((j(location.hash.slice(1))||1)-1,t.fragment?j(l("f")||""):null)};e.on("fragment",(({index:e,fragmentIndex:r})=>{n||d({f:0===r||r.toString()},{location:{...location,hash:`#${e+1}`},setter:(...e)=>t.history?history.pushState(...e):history.replaceState(...e)})})),setTimeout((()=>{o(),window.addEventListener("hashchange",(()=>r((()=>{o({fragment:!1}),d({f:void 0})})))),window.addEventListener("popstate",(()=>{n||r((()=>o()))})),n=!1}),0)}},W=(e={})=>{var n;const r=e.key||(null===(n=window.history.state)||void 0===n?void 0:n.marpBespokeSyncKey)||Math.random().toString(36).slice(2),o=`bespoke-marp-sync-${r}`;var a;a={marpBespokeSyncKey:r},d({},{setter:(e,...n)=>t({...e,...a},...n)});const i=()=>{const e=u(o);return e?JSON.parse(e):Object.create(null)},s=e=>{const t=i(),n={...t,...e(t)};return f(o,JSON.stringify(n)),n},l=()=>{window.removeEventListener("pageshow",l),s((e=>({reference:(e.reference||0)+1})))};return e=>{l(),Object.defineProperty(e,"syncKey",{value:r,enumerable:!0});let t=!0;setTimeout((()=>{e.on("fragment",(e=>{t&&s((()=>({index:e.index,fragmentIndex:e.fragmentIndex})))}))}),0),window.addEventListener("storage",(n=>{if(n.key===o&&n.oldValue&&n.newValue){const r=JSON.parse(n.oldValue),o=JSON.parse(n.newValue);if(r.index!==o.index||r.fragmentIndex!==o.fragmentIndex)try{t=!1,e.slide(o.index,{fragment:o.fragmentIndex})}finally{t=!0}}}));const n=()=>{const{reference:e}=i();void 0===e||e<=1?m(o):s((()=>({reference:e-1})))};window.addEventListener("pagehide",(e=>{e.persisted&&window.addEventListener("pageshow",l),n()})),e.on("destroy",n)}},{PI:Y,abs:J,sqrt:z,atan2:G}=Math,Q={passive:!0},Z=({slope:e=-.7,swipeThreshold:t=30}={})=>n=>{let r;const o=n.parent,a=e=>{const t=o.getBoundingClientRect();return{x:e.pageX-(t.left+t.right)/2,y:e.pageY-(t.top+t.bottom)/2}};o.addEventListener("touchstart",(({touches:e})=>{r=1===e.length?a(e[0]):void 0}),Q),o.addEventListener("touchmove",(e=>{if(r)if(1===e.touches.length){e.preventDefault();const t=a(e.touches[0]),n=t.x-r.x,o=t.y-r.y;r.delta=z(J(n)**2+J(o)**2),r.radian=G(n,o)}else r=void 0})),o.addEventListener("touchend",(o=>{if(r){if(r.delta&&r.delta>=t&&r.radian){const t=(r.radian-e+Y)%(2*Y)-Y;n[t<0?"next":"prev"](),o.stopPropagation()}r=void 0}}),Q)},ee="_tA",te=e=>{const t=document.documentTransition;if(!t)return;let n;e._tP=!1;const r=(n,{back:r,cond:o})=>a=>{var i,s;const l=e.slides[e.slide()].querySelector("section[data-transition]");if(!l)return!0;const d=document.querySelector(".bespoke-marp-osc"),c=d?[d]:void 0;if(e._tP){if(a._tA){e._tP=!1;try{t.start({sharedElements:c}).catch((()=>{}))}catch(e){}return!0}}else{if(!o(a))return!0;const d="transition"+(a.back||r?"Back":""),u=Number.parseInt(null!==(i=l.dataset[`${d}Duration`])&&void 0!==i?i:"",10),f=Number.parseInt(null!==(s=l.dataset[`${d}Delay`])&&void 0!==s?s:"",10),m={};Number.isNaN(u)||(m.duration=u.toString()),Number.isNaN(f)||(m.delay=f.toString()),e._tP=t.prepare({rootTransition:l.dataset[d],rootConfig:m,sharedElements:c}).then((()=>n(a))).catch((()=>n(a)))}return!1};e.on("prev",r((t=>e.prev({...t,[ee]:!0})),{back:!0,cond:e=>{var t;return e.index>0&&!((null===(t=e.fragment)||void 0===t||t)&&n.fragmentIndex>0)}})),e.on("next",r((t=>e.next({...t,[ee]:!0})),{cond:t=>t.index+1<e.slides.length&&!(n.fragmentIndex+1<n.fragments.length)})),setTimeout((()=>{e.on("slide",r((t=>e.slide(t.index,{...t,[ee]:!0})),{cond:t=>{const n=e.slide();return t.index!==n&&(t.back=t.index<n,!0)}}))}),0),e.on("fragment",(e=>{n=e}))};let ne;const re=()=>(void 0===ne&&(ne="wakeLock"in navigator&&navigator.wakeLock),ne),oe=async()=>{const e=re();if(e)try{return await e.request("screen")}catch(e){console.warn(e)}return null},ae=async()=>{if(!re())return;let e;const t=()=>{e&&"visible"===document.visibilityState&&oe()};for(const e of["visibilitychange","fullscreenchange"])document.addEventListener(e,t);return e=await oe(),e};((t=document.getElementById("p"))=>{(()=>{const t=l("view");e.dataset.bespokeView=t===r||t===n?t:""})();const a=(e=>{const t=l(e);return d({[e]:void 0}),t})("sync")||void 0;var i,c,u,f,m,g,h,y,b,w,E,T;i=t,c=((...e)=>{const t=o.findIndex((e=>s()===e));return e.map((([e,n])=>e[t]&&n)).filter((e=>e))})([[1,1,0],W({key:a})],[[1,1,1],V(t)],[[1,1,0],L],[[1,1,1],p],[[1,0,0],k()],[[1,1,1],$],[[1,1,1],H({history:!1})],[[1,1,0],S()],[[1,1,0],x],[[1,0,0],R],[[1,1,0],Z()],[[1,0,0],P()],[[1,0,0],te],[[1,1,1],v],[[1,1,0],ae]),f=1===(i.parent||i).nodeType?i.parent||i:document.querySelector(i.parent||i),m=[].filter.call("string"==typeof i.slides?f.querySelectorAll(i.slides):i.slides||f.children,(function(e){return"SCRIPT"!==e.nodeName})),g={},h=function(e,t){return(t=t||{}).index=m.indexOf(e),t.slide=e,t},w=function(e,t){m[e]&&(u&&b("deactivate",h(u,t)),u=m[e],b("activate",h(u,t)))},E=function(e,t){var n=m.indexOf(u)+e;b(e>0?"next":"prev",h(u,t))&&w(n,t)},T={off:y=function(e,t){g[e]=(g[e]||[]).filter((function(e){return e!==t}))},on:function(e,t){return(g[e]||(g[e]=[])).push(t),y.bind(null,e,t)},fire:b=function(e,t){return(g[e]||[]).reduce((function(e,n){return e&&!1!==n(t)}),!0)},slide:function(e,t){if(!arguments.length)return m.indexOf(u);b("slide",h(m[e],t))&&w(e,t)},next:E.bind(null,1),prev:E.bind(null,-1),parent:f,slides:m,destroy:function(e){b("destroy",h(u,e)),g={}}},(c||[]).forEach((function(e){e(T)})),u||w(0)})()}();</script></body></html>
